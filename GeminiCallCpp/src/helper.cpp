@@ -29,9 +29,10 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
         return "Error: API key not configured";
     }
 
-    // Use Gemini Pro model
-    std::string model = "gemini-pro:generateContent";
+    // Use Gemini 2.5 flash
+    std::string model = "gemini-2.5-flash:generateContent";
     std::string url = base_url_ + model + "?key=" + api_key_;
+    //std::string url = base_url_ + "?key=" + api_key_;
 
     // Create JSON payload
     json payload;
