@@ -7,7 +7,8 @@
 using json = nlohmann::json;
 
 // Callback function for writing data
-size_t GeminiClient::curlWriteCallback(void* contents, size_t size, size_t nmemb, std::string* response) {
+size_t GeminiClient::curlWriteCallback(void* contents, size_t size, size_t nmemb, std::string* response)
+{
     size_t total_size = size * nmemb;
     response->append((char*)contents, total_size);
     return total_size;
@@ -17,15 +18,25 @@ GeminiClient::GeminiClient(const std::string& api_key) : api_key_(api_key) {}
 
 bool GeminiClient::isConfigured() const
 {
-    return !api_key_.empty();
+    if (api_key_.empty())
+    {
+        return false;
+    }
+    else
+    {
+        return true;        // Has API configured
+    }
 }
 
-std::string GeminiClient::generateContent(const std::string& prompt) {
-    return generateContent(prompt, {});
+std::string GeminiClient::generateContent(const std::string& prompt)
+{
+    return generateContent(prompt, {});     // Allows the user to add more parameters if needed (i.e. tempurature/max output tokens)s
 }
 
-std::string GeminiClient::generateContent(const std::string& prompt, const std::map<std::string, std::string>& parameters) {
-    if (!isConfigured()) {
+std::string GeminiClient::generateContent(const std::string& prompt, const std::map<std::string, std::string>& parameters)
+{
+    if (!isConfigured())
+    {
         return "Error: API key not configured";
     }
 
@@ -45,19 +56,32 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
     payload["contents"] = json::array({ contents });
 
     // Add generation config if parameters are provided
-    if (!parameters.empty()) {
-        json generationConfig;
-        for (const auto& param : parameters) {
-            if (param.first == "temperature") {
-                generationConfig["temperature"] = std::stod(param.second);
+    if (!parameters.empty())
+    {
+        json generationConfig;         // Makes json object to hold generation configuration
+        
+        // Parameter types
+        // tempurature - creativity (0.0 - 1.0)
+        // topP - response diversity
+        // topK - vocabulary section
+        // maxOutputTokens - response length limit
+
+        for (const auto& param : parameters)
+        {
+            if (param.first == "temperature")
+            {
+                generationConfig["temperature"] = std::stod(param.second);          // stod converts string to double. And stoi converts string to integer.
             }
-            else if (param.first == "topP") {
+            else if (param.first == "topP")
+            {
                 generationConfig["topP"] = std::stod(param.second);
             }
-            else if (param.first == "topK") {
+            else if (param.first == "topK")
+            {
                 generationConfig["topK"] = std::stoi(param.second);
             }
-            else if (param.first == "maxOutputTokens") {
+            else if (param.first == "maxOutputTokens")
+            {
                 generationConfig["maxOutputTokens"] = std::stoi(param.second);
             }
         }
@@ -91,7 +115,7 @@ std::string GeminiClient::makeHttpRequest(const std::string& url, const std::str
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "Gemini-CPP-Client/1.0");
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L); // 30 second timeout
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);       // 30 second timeout
 
         // Perform the request
         res = curl_easy_perform(curl);
@@ -105,8 +129,9 @@ std::string GeminiClient::makeHttpRequest(const std::string& url, const std::str
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
-    else {
-        response = "Error: Failed to initialize CURL";
+    else
+    {
+        response = "Error: Failed to initialize cURL";
     }
 
     curl_global_cleanup();
