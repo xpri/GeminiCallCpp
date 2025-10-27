@@ -37,4 +37,10 @@ private:
 // Utility function to get API key from environment or user
 //std::string getGeminiApiKey();
 
+void getPromptAndPushAPI(GeminiClient& client);
+
+void demo1(GeminiClient& client);
+
+std::string displayMenu();
+
 #endif
