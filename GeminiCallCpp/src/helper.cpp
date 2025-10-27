@@ -90,7 +90,7 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
 
     std::string post_data = payload.dump();
 
-    std::cout << "Sending request to Gemini API..." << std::endl;
+    std::cout << "\nSending request to Gemini API...\n" << std::endl;
     std::string response = makeHttpRequest(url, post_data);
 
     // Parse the response to extract the actual text
@@ -172,4 +172,44 @@ std::string GeminiClient::parseAPIResponse(const std::string& response) {
     catch (const std::exception& e) {
         return "Error: " + std::string(e.what());
     }
+}
+
+void getPromptAndPushAPI(GeminiClient& client)
+{
+    std::string prompt;
+    std::cout << "\nHello! Please input your prompt for the API call:" << std::endl;
+    //std::cin >> prompt;
+    std::getline(std::cin, prompt);
+    std::string response = client.generateContent(prompt);
+    std::cout << response << std::endl;
+    std::cout << "----------------------------------------\n" << std::endl;
+}
+
+void demo1(GeminiClient& client)
+{
+    std::cout << '\n' << std::endl;
+    std::cout << "Testing basic API call...\n" << std::endl;
+    std::map<std::string, std::string> params;
+    params["tempurature"] = "0.8";
+    params["maxOutputTokens"] = "500";
+    std::string prompt = "Hello! Please introduce yourself briefly.";
+    std::cout << "Prompt: " << prompt << '\n' << std::endl;
+    std::string response = client.generateContent(prompt);
+    std::cout << "Response:\n" << response << std::endl;
+    std::cout << "----------------------------------------\n" << std::endl;
+}
+
+std::string displayMenu()
+{
+    std::string response;
+
+    std::cout << "Please choose from one of the following menu items:" << std::endl;
+    std::cout << "(1) Demo 1 test" << std::endl;
+    std::cout << "(2) Free Response prompt to gemini" << std::endl;
+    std::cout << "(0) Exit program" << std::endl;
+    std::cout << "Please enter your desired option: ";
+    //std::getline(std::cin, response);
+    //std::cin >> response;
+    std::getline(std::cin >> std::ws, response);        // Clears out the leading whitespace in the stream.
+    return response;
 }
