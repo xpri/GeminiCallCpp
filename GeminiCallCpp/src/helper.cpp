@@ -61,7 +61,7 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
         json generationConfig;         // Makes json object to hold generation configuration
         
         // Parameter types
-        // tempurature - creativity (0.0 - 1.0)
+        // temperature - creativity (0.0 - 1.0)
         // topP - response diversity
         // topK - vocabulary section
         // maxOutputTokens - response length limit
@@ -190,7 +190,7 @@ void demo1(GeminiClient& client)
     std::cout << '\n' << std::endl;
     std::cout << "Testing basic API call...\n" << std::endl;
     std::map<std::string, std::string> params;
-    params["tempurature"] = "0.8";
+    params["temperature"] = "0.8";
     params["maxOutputTokens"] = "500";
     std::string prompt = "Hello! Please introduce yourself briefly.";
     std::cout << "Prompt: " << prompt << '\n' << std::endl;
