@@ -8,6 +8,7 @@ Make sure to configure vcpkg -> use these two commands in the same folder as CMa
 
 >vcpkg add port [name of package/library]
 
- 10/27/2025, 5:30PM
- Passion project development has come to fruition. Working towards other concepts.
- Will try to integrate with my discord bot project.
+Please create a config.cpp file to store the Gemini API key.
+
+I understand this isn't the most secure method, but this is intended as a homemade project. I'm aware
+that alternatives like environment variables exist, but for the sake of simplicity, I'm using a config.cpp implementation.
