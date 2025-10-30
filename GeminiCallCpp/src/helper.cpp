@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <sstream>
+#include <time.h>
 
 using json = nlohmann::json;
 
@@ -212,4 +213,11 @@ std::string displayMenu()
     //std::cin >> response;
     std::getline(std::cin >> std::ws, response);        // Clears out the leading whitespace in the stream.
     return response;
+}
+
+void wait(int milliseconds)      //in milliseconds
+{
+    clock_t endwait;
+    endwait = clock() + milliseconds * CLOCKS_PER_SEC / 1000;
+    while (clock() < endwait) {}
 }

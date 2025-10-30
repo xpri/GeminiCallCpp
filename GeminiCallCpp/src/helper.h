@@ -43,4 +43,6 @@ void demo1(GeminiClient& client);
 
 std::string displayMenu();
 
+void wait(int milliseconds);
+
 #endif
