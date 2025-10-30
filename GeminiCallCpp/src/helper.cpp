@@ -93,7 +93,10 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
 
     std::string post_data = payload.dump();
 
-    std::cout << "\nSending request to Gemini API...\n" << std::endl;
+    //std::cout << stringDelay("\nSending request to Gemini API...\n", 10) << std::endl;
+    
+    stringDelay("\nSending request to Gemini API...\n", 30);
+
     std::string response = makeHttpRequest(url, post_data);
 
     // Parse the response to extract the actual text
@@ -196,7 +199,10 @@ void demo1(GeminiClient& client)
     params["temperature"] = "0.8";
     params["maxOutputTokens"] = "500";
     std::string prompt = "Hello! Please introduce yourself briefly.";
-    std::cout << "Prompt: " << prompt << '\n' << std::endl;
+
+    //std::cout << "Prompt: " << prompt << '\n' << std::endl;
+    stringDelay("Prompt: " + prompt + '\n', 40);
+
     std::string response = client.generateContent(prompt);
     std::cout << "Response:\n" << response << std::endl;
     std::cout << "----------------------------------------\n" << std::endl;
@@ -224,11 +230,12 @@ void wait(int milliseconds)      //in milliseconds
     while (clock() < endwait) {}
 }
 
-void stringDelay(std::string string, int waitingTime)
+void stringDelay(const std::string& text, int waitingTime)
 {
-    for (int i = 0; i < string.length(); i++)
+    for (size_t i = 0; i < text.length(); ++i)
     {
-        std::cout << string[i];
+        std::cout << text[i];
+        std::cout.flush();
         wait(waitingTime);
     }
 }
@@ -243,7 +250,7 @@ void cinFailSafe() // Clears the cin input if it is an incorrect input. e.g. str
         /* Also 'std::numeric_limits<std::streamsize>::max()' works good on every compiler BUT MSVC.
         * Like it works fine on MinGW-w64, Clang, and WSL with GCC.
         * BUT this doesn't work with MSVC. So if you're using this on visual studio 2022 then it is okay and you don't
-        * need to change anything. But if you are working on visual stidio code then you just take out the parenthesis outisde of 
+        * need to change anything. But if you are working on visual studio code then you just take out the parenthesis outside of 
         * std::numeric_limits<std::streamsize>::max
         * The reason why you have to include parenthesis around max is to prevent MSVC macro expansion issues.
         */ 
