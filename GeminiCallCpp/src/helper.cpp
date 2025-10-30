@@ -2,8 +2,8 @@
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <iostream>
-#include <sstream>
-#include <time.h>
+
+#include <ctime>
 #include <limits>
 
 using json = nlohmann::json;
@@ -32,7 +32,7 @@ bool GeminiClient::isConfigured() const
 
 std::string GeminiClient::generateContent(const std::string& prompt)
 {
-    return generateContent(prompt, {});     // Allows the user to add more parameters if needed (i.e. tempurature/max output tokens)s
+    return generateContent(prompt, {});     // Allows the user to add more parameters if needed (i.e. temperature/max output tokens)s
 }
 
 std::string GeminiClient::generateContent(const std::string& prompt, const std::map<std::string, std::string>& parameters)
@@ -62,11 +62,12 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
     {
         json generationConfig;         // Makes json object to hold generation configuration
         
-        // Parameter types
-        // temperature - creativity (0.0 - 1.0)
-        // topP - response diversity
-        // topK - vocabulary section
-        // maxOutputTokens - response length limit
+        /* Parameter types
+        * temperature - creativity (0.0 - 1.0)
+        * topP - response diversity
+        * topK - vocabulary section
+        * maxOutputTokens - response length limit
+        */
 
         for (const auto& param : parameters)
         {
@@ -223,6 +224,15 @@ void wait(int milliseconds)      //in milliseconds
     while (clock() < endwait) {}
 }
 
+void stringDelay(std::string string, int waitingTime)
+{
+    for (int i = 0; i < string.length(); i++)
+    {
+        std::cout << string[i];
+        wait(waitingTime);
+    }
+}
+
 void cinFailSafe() // Clears the cin input if it is an incorrect input. e.g. string if it only accepts ints.
 {
     if (std::cin.fail())
@@ -235,6 +245,7 @@ void cinFailSafe() // Clears the cin input if it is an incorrect input. e.g. str
         * BUT this doesn't work with MSVC. So if you're using this on visual studio 2022 then it is okay and you don't
         * need to change anything. But if you are working on visual stidio code then you just take out the parenthesis outisde of 
         * std::numeric_limits<std::streamsize>::max
+        * The reason why you have to include parenthesis around max is to prevent MSVC macro expansion issues.
         */ 
     }
 }
