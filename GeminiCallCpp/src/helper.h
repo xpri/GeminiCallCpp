@@ -45,4 +45,5 @@ std::string displayMenu();
 
 void wait(int milliseconds);
 
+void cinFailSafe();
 #endif

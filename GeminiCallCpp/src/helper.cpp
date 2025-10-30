@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <time.h>
+#include <limits>
 
 using json = nlohmann::json;
 
@@ -220,4 +221,20 @@ void wait(int milliseconds)      //in milliseconds
     clock_t endwait;
     endwait = clock() + milliseconds * CLOCKS_PER_SEC / 1000;
     while (clock() < endwait) {}
+}
+
+void cinFailSafe() // Clears the cin input if it is an incorrect input. e.g. string if it only accepts ints.
+{
+    if (std::cin.fail())
+    {
+        // Clear the error flag and discard invalid input
+        std::cin.clear();
+        std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); // Added <limits> in the header
+        /* Also 'std::numeric_limits<std::streamsize>::max()' works good on every compiler BUT MSVC.
+        * Like it works fine on MinGW-w64, Clang, and WSL with GCC.
+        * BUT this doesn't work with MSVC. So if you're using this on visual studio 2022 then it is okay and you don't
+        * need to change anything. But if you are working on visual stidio code then you just take out the parenthesis outisde of 
+        * std::numeric_limits<std::streamsize>::max
+        */ 
+    }
 }
