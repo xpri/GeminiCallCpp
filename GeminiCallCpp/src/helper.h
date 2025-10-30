@@ -43,4 +43,9 @@ void demo1(GeminiClient& client);
 
 std::string displayMenu();
 
+void wait(int milliseconds);
+
+void cinFailSafe();
+
+void stringDelay(const std::string& text, int waitingTime);
 #endif

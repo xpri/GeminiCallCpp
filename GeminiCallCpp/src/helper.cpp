@@ -2,7 +2,9 @@
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <iostream>
-#include <sstream>
+
+#include <ctime>
+#include <limits>
 
 using json = nlohmann::json;
 
@@ -30,7 +32,7 @@ bool GeminiClient::isConfigured() const
 
 std::string GeminiClient::generateContent(const std::string& prompt)
 {
-    return generateContent(prompt, {});     // Allows the user to add more parameters if needed (i.e. tempurature/max output tokens)s
+    return generateContent(prompt, {});     // Allows the user to add more parameters if needed (i.e. temperature/max output tokens)s
 }
 
 std::string GeminiClient::generateContent(const std::string& prompt, const std::map<std::string, std::string>& parameters)
@@ -60,11 +62,12 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
     {
         json generationConfig;         // Makes json object to hold generation configuration
         
-        // Parameter types
-        // temperature - creativity (0.0 - 1.0)
-        // topP - response diversity
-        // topK - vocabulary section
-        // maxOutputTokens - response length limit
+        /* Parameter types
+        * temperature - creativity (0.0 - 1.0)
+        * topP - response diversity
+        * topK - vocabulary section
+        * maxOutputTokens - response length limit
+        */
 
         for (const auto& param : parameters)
         {
@@ -90,7 +93,10 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
 
     std::string post_data = payload.dump();
 
-    std::cout << "\nSending request to Gemini API...\n" << std::endl;
+    //std::cout << stringDelay("\nSending request to Gemini API...\n", 10) << std::endl;
+    
+    stringDelay("\nSending request to Gemini API...\n", 30);
+
     std::string response = makeHttpRequest(url, post_data);
 
     // Parse the response to extract the actual text
@@ -193,7 +199,10 @@ void demo1(GeminiClient& client)
     params["temperature"] = "0.8";
     params["maxOutputTokens"] = "500";
     std::string prompt = "Hello! Please introduce yourself briefly.";
-    std::cout << "Prompt: " << prompt << '\n' << std::endl;
+
+    //std::cout << "Prompt: " << prompt << '\n' << std::endl;
+    stringDelay("Prompt: " + prompt + '\n', 40);
+
     std::string response = client.generateContent(prompt);
     std::cout << "Response:\n" << response << std::endl;
     std::cout << "----------------------------------------\n" << std::endl;
@@ -212,4 +221,38 @@ std::string displayMenu()
     //std::cin >> response;
     std::getline(std::cin >> std::ws, response);        // Clears out the leading whitespace in the stream.
     return response;
+}
+
+void wait(int milliseconds)      //in milliseconds
+{
+    clock_t endwait;
+    endwait = clock() + milliseconds * CLOCKS_PER_SEC / 1000;
+    while (clock() < endwait) {}
+}
+
+void stringDelay(const std::string& text, int waitingTime)
+{
+    for (size_t i = 0; i < text.length(); ++i)
+    {
+        std::cout << text[i];
+        std::cout.flush();
+        wait(waitingTime);
+    }
+}
+
+void cinFailSafe() // Clears the cin input if it is an incorrect input. e.g. string if it only accepts ints.
+{
+    if (std::cin.fail())
+    {
+        // Clear the error flag and discard invalid input
+        std::cin.clear();
+        std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); // Added <limits> in the header
+        /* Also 'std::numeric_limits<std::streamsize>::max()' works good on every compiler BUT MSVC.
+        * Like it works fine on MinGW-w64, Clang, and WSL with GCC.
+        * BUT this doesn't work with MSVC. So if you're using this on visual studio 2022 then it is okay and you don't
+        * need to change anything. But if you are working on visual studio code then you just take out the parenthesis outside of 
+        * std::numeric_limits<std::streamsize>::max
+        * The reason why you have to include parenthesis around max is to prevent MSVC macro expansion issues.
+        */ 
+    }
 }
