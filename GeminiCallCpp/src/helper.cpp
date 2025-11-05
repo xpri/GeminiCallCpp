@@ -92,13 +92,11 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
     }
 
     std::string post_data = payload.dump();
-
-    //std::cout << stringDelay("\nSending request to Gemini API...\n", 10) << std::endl;
     
+    stringDelay("\nSending request to Gemini API... (this may take a moment)\n", 30);
 
     std::string response = makeHttpRequest(url, post_data);
 
-    stringDelay("\nSending request to Gemini API...\n", 30);
 
     // Parse the response to extract the actual text
     return parseAPIResponse(response);
@@ -187,7 +185,13 @@ void getPromptAndPushAPI(GeminiClient& client)
     std::cout << "\nHello! Please input your prompt for the API call:" << std::endl;
     //std::cin >> prompt;
     std::getline(std::cin, prompt);
+
+    auto start = std::chrono::steady_clock::now();
     std::string response = client.generateContent(prompt);
+    auto end = std::chrono::steady_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
     std::cout << response << std::endl;
     std::cout << "----------------------------------------\n" << std::endl;
 }
@@ -198,11 +202,20 @@ void demo1(GeminiClient& client)
 
     std::string prompt = "Hello! Please introduce yourself briefly.";
 
-    std::string response = client.generateContent(prompt);
     
     stringDelay("Prompt: " + prompt + '\n', 40);
 
-    std::cout << "\nResponse recieved!" << std::endl;
+
+    auto start = std::chrono::steady_clock::now();
+    std::string response = client.generateContent(prompt);
+    auto end = std::chrono::steady_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    std::cout << "Response received! (" << duration.count() << " milliseconds)" << std::endl;
+
+
+    //std::cout << "\nResponse recieved!" << std::endl;
     std::cout << std::string(40, '-') << std::endl;
     std::cout << response << std::endl;
     std::cout << std::string(40, '-') << std::endl;
