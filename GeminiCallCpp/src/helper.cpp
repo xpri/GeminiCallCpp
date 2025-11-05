@@ -92,12 +92,11 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
     }
 
     std::string post_data = payload.dump();
-
-    //std::cout << stringDelay("\nSending request to Gemini API...\n", 10) << std::endl;
     
-    stringDelay("\nSending request to Gemini API...\n", 30);
+    stringDelay("\nSending request to Gemini API... (this may take a moment)\n", 30);
 
     std::string response = makeHttpRequest(url, post_data);
+
 
     // Parse the response to extract the actual text
     return parseAPIResponse(response);
@@ -186,26 +185,45 @@ void getPromptAndPushAPI(GeminiClient& client)
     std::cout << "\nHello! Please input your prompt for the API call:" << std::endl;
     //std::cin >> prompt;
     std::getline(std::cin, prompt);
+
+    auto start = std::chrono::steady_clock::now();
     std::string response = client.generateContent(prompt);
+    auto end = std::chrono::steady_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
     std::cout << response << std::endl;
     std::cout << "----------------------------------------\n" << std::endl;
 }
 
 void demo1(GeminiClient& client)
 {
-    std::cout << '\n' << std::endl;
-    std::cout << "Testing basic API call...\n" << std::endl;
-    std::map<std::string, std::string> params;
-    params["temperature"] = "0.8";
-    params["maxOutputTokens"] = "500";
+    std::cout << "\nDEMO 1: Basic introduction" << std::endl;
+
     std::string prompt = "Hello! Please introduce yourself briefly.";
 
-    //std::cout << "Prompt: " << prompt << '\n' << std::endl;
+    
     stringDelay("Prompt: " + prompt + '\n', 40);
 
+
+    auto start = std::chrono::steady_clock::now();
     std::string response = client.generateContent(prompt);
-    std::cout << "Response:\n" << response << std::endl;
-    std::cout << "----------------------------------------\n" << std::endl;
+    auto end = std::chrono::steady_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    std::cout << "Response received! (" << duration.count() << " milliseconds)" << std::endl;
+
+
+    //std::cout << "\nResponse recieved!" << std::endl;
+    std::cout << std::string(40, '-') << std::endl;
+    std::cout << response << std::endl;
+    std::cout << std::string(40, '-') << std::endl;
+}
+
+void demo2(GeminiClient& client)
+{
+    std::cout << "\nDEMO 2: w" << std::endl;
 }
 
 std::string displayMenu()
@@ -221,6 +239,13 @@ std::string displayMenu()
     //std::cin >> response;
     std::getline(std::cin >> std::ws, response);        // Clears out the leading whitespace in the stream.
     return response;
+}
+
+void printSectionHeader(const std::string& title)
+{
+    std::cout << "\n" << std::string(60, '=') << std::endl;
+    std::cout << " " << title << std::endl;
+    std::cout << std::string(60, '=') << std::endl;
 }
 
 void wait(int milliseconds)      //in milliseconds
