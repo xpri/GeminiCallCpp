@@ -66,7 +66,7 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
         * temperature - creativity (0.0 - 1.0)
         * topP - response diversity
         * topK - vocabulary section
-        * maxOutputTokens - response length limit
+        * maxOutputTokens - response length limit (0 - 10000000000)
         */
 
         for (const auto& param : parameters)
@@ -102,7 +102,8 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
     return parseAPIResponse(response);
 }
 
-std::string GeminiClient::makeHttpRequest(const std::string& url, const std::string& post_data) {
+std::string GeminiClient::makeHttpRequest(const std::string& url, const std::string& post_data)
+{
     CURL* curl;
     CURLcode res;
     std::string response;
@@ -126,7 +127,8 @@ std::string GeminiClient::makeHttpRequest(const std::string& url, const std::str
         res = curl_easy_perform(curl);
 
         // Check for errors
-        if (res != CURLE_OK) {
+        if (res != CURLE_OK)
+        {
             response = "Error: " + std::string(curl_easy_strerror(res));
         }
 
@@ -143,26 +145,33 @@ std::string GeminiClient::makeHttpRequest(const std::string& url, const std::str
     return response;
 }
 
-std::string GeminiClient::parseAPIResponse(const std::string& response) {
-    try {
+std::string GeminiClient::parseAPIResponse(const std::string& response)
+{
+    try
+    {
         // Check if it's an error message first
-        if (response.find("Error:") == 0) {
+        if (response.find("Error:") == 0)
+        {
             return response;
         }
 
         auto json_response = json::parse(response);
 
         // Check for API errors
-        if (json_response.contains("error")) {
+        if (json_response.contains("error"))
+        {
             return "API Error: " + json_response["error"]["message"].get<std::string>();
         }
 
         // Extract the generated text
-        if (json_response.contains("candidates") && !json_response["candidates"].empty()) {
+        if (json_response.contains("candidates") && !json_response["candidates"].empty())
+        {
             auto& candidate = json_response["candidates"][0];
-            if (candidate.contains("content") && candidate["content"].contains("parts")) {
+            if (candidate.contains("content") && candidate["content"].contains("parts"))
+            {
                 auto& parts = candidate["content"]["parts"];
-                if (!parts.empty() && parts[0].contains("text")) {
+                if (!parts.empty() && parts[0].contains("text"))
+                {
                     return parts[0]["text"].get<std::string>();
                 }
             }
@@ -171,10 +180,12 @@ std::string GeminiClient::parseAPIResponse(const std::string& response) {
         return "Error: Unexpected response format from API";
 
     }
-    catch (const json::parse_error& e) {
+    catch (const json::parse_error& e)
+    {
         return "Error: Failed to parse API response - " + std::string(e.what());
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e)
+    {
         return "Error: " + std::string(e.what());
     }
 }
@@ -223,7 +234,29 @@ void demo1(GeminiClient& client)
 
 void demo2(GeminiClient& client)
 {
-    std::cout << "\nDEMO 2: w" << std::endl;
+    std::cout << "\nDEMO 2: Testing Parameters." << std::endl;
+    std::string prompt = "Hello! Tell me about the stokes equation.";
+
+    std::map<std::string, std::string> params;
+    params["temperature"] = "0.8";
+    params["topP"] = "0.7";
+    params["topK"] = "1";
+    params["maxOutputTokens"] = "9999999999";
+
+    stringDelay("Prompt: " + prompt + '\n', 40);
+
+    auto start = std::chrono::steady_clock::now();
+    std::string response = client.generateContent(prompt, params);
+    auto end = std::chrono::steady_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    std::cout << "Response received! (" << duration.count() << " milliseconds)" << std::endl;
+
+
+    std::cout << std::string(40, '-') << std::endl;
+    std::cout << response << std::endl;
+    std::cout << std::string(40, '-') << std::endl;
 }
 
 std::string displayMenu()
@@ -232,7 +265,8 @@ std::string displayMenu()
 
     std::cout << "Please choose from one of the following menu items:" << std::endl;
     std::cout << "(1) Demo 1 test" << std::endl;
-    std::cout << "(2) Free Response prompt to gemini" << std::endl;
+    std::cout << "(2) Demo 2 test" << std::endl;
+    std::cout << "(9) Free Response prompt to gemini" << std::endl;
     std::cout << "(0) Exit program" << std::endl;
     std::cout << "Please enter your desired option: ";
     //std::getline(std::cin, response);

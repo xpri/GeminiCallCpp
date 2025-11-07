@@ -20,7 +20,7 @@ int main()
 	// Demo 1: Simple test
 	//std::cout << "Testing basic API call..." << std::endl;
 	//std::map<std::string, std::string> params;
-	//params["tempurature"] = "0.8";
+	//params["temperature"] = "0.8";
 	//params["maxOutputTokens"] = "500";
 	//std::string response = client.generateContent("Hello! Please introduce yourself briefly.");
 	//std::cout << "Response: " << response << std::endl;
@@ -52,6 +52,10 @@ int main()
 			demo1(client);
 		}
 		else if (userMenuResponse == "2")
+		{
+			demo2(client);
+		}
+		else if (userMenuResponse == "9")
 		{
 			getPromptAndPushAPI(client);
 		}
