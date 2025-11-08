@@ -241,7 +241,7 @@ void demo2(GeminiClient& client)
     params["temperature"] = "0.8";
     params["topP"] = "0.7";
     params["topK"] = "1";
-    params["maxOutputTokens"] = "9999999999";
+    params["maxOutputTokens"] = "2149000000";
 
     stringDelay("Prompt: " + prompt + '\n', 40);
 
