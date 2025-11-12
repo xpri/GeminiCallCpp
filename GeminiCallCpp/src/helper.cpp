@@ -66,7 +66,9 @@ std::string GeminiClient::generateContent(const std::string& prompt, const std::
         * temperature - creativity (0.0 - 1.0)
         * topP - response diversity
         * topK - vocabulary section
-        * maxOutputTokens - response length limit (0 - 10000000000)
+        * maxOutputTokens - response length limit (0 - 2147483647 (which is 2^15))
+        * (most queries are above ~20 tokens. Anything less would cause the API pull to fail.
+        * Make sure that you set the token limit to something reasonable.
         */
 
         for (const auto& param : parameters)
@@ -241,7 +243,7 @@ void demo2(GeminiClient& client)
     params["temperature"] = "0.8";
     params["topP"] = "0.7";
     params["topK"] = "1";
-    params["maxOutputTokens"] = "2149000000";
+    params["maxOutputTokens"] = "1000";
 
     stringDelay("Prompt: " + prompt + '\n', 40);
 
