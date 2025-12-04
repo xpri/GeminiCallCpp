@@ -1,7 +1,10 @@
+>***CURRENT STATUS: WORKING***
+
 # GeminiCallCpp
 A C++ program that asks the user for a prompt and then runs it through gemini to generate a response.
 
 This program allows the integration of gemini into C++.
+
 Steps to run this program:
 I used visual studio 2022 to run this program, but I am working towards using visual studio code and/or linux terminal.
 
