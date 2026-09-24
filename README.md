@@ -12,3 +12,5 @@ Please create a config.cpp file to store the Gemini API key.
 
 I understand this isn't the most secure method, but this is intended as a homemade project. I'm aware
 that alternatives like environment variables exist, but for the sake of simplicity, I'm using a config.cpp implementation.
+
+Make sure your DNS server assignment in wifi settings is set to ivp4 and to ping google (8.8.8.8).
